@@ -30,7 +30,7 @@
         }
     .end annotation
 
-    .line 143
+    .line 137
     iput-object p1, p0, Lcom/perm/kate/api/WebMint$4;->val$v:Landroid/webkit/WebView;
 
     invoke-direct {p0}, Ljava/lang/Object;-><init>()V
@@ -43,7 +43,7 @@
 .method public run()V
     .locals 1
 
-    .line 146
+    .line 140
     :try_start_0
     iget-object v0, p0, Lcom/perm/kate/api/WebMint$4;->val$v:Landroid/webkit/WebView;
 

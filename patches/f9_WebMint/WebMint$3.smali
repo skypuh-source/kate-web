@@ -30,7 +30,7 @@
         }
     .end annotation
 
-    .line 86
+    .line 82
     iput-object p1, p0, Lcom/perm/kate/api/WebMint$3;->val$v:Landroid/webkit/WebView;
 
     invoke-direct {p0}, Ljava/lang/Object;-><init>()V
@@ -43,7 +43,7 @@
 .method public run()V
     .locals 3
 
-    .line 88
+    .line 84
     invoke-static {}, Lcom/perm/kate/api/WebMint;->access$300()Z
 
     move-result v0
@@ -60,7 +60,7 @@
 
     goto :goto_0
 
-    .line 90
+    .line 86
     :cond_0
     :try_start_0
     iget-object v0, p0, Lcom/perm/kate/api/WebMint$3;->val$v:Landroid/webkit/WebView;
@@ -78,28 +78,9 @@
     goto :goto_0
 
     :catchall_0
-    move-exception v0
-
-    .line 92
-    new-instance v1, Ljava/lang/StringBuilder;
-
-    const-string v2, "webmint poll: "
-
-    invoke-direct {v1, v2}, Ljava/lang/StringBuilder;-><init>(Ljava/lang/String;)V
-
-    invoke-virtual {v1, v0}, Ljava/lang/StringBuilder;->append(Ljava/lang/Object;)Ljava/lang/StringBuilder;
-
-    invoke-virtual {v1}, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
-
-    move-result-object v0
-
-    const-string v1, "Kate.Mint"
-
-    invoke-static {v1, v0}, Landroid/util/Log;->w(Ljava/lang/String;Ljava/lang/String;)I
-
     const/4 v0, 0x0
 
-    .line 93
+    .line 88
     invoke-static {v0}, Lcom/perm/kate/api/WebMint;->access$200(Ljava/lang/String;)V
 
     :cond_1

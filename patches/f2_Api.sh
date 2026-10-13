@@ -47,6 +47,12 @@ new_host = 'const-string v1, "https://web.api.vk.ru/method/"'
 assert s.count(old_host) == 1, "хост не найден"
 s = s.replace(old_host, new_host, 1)
 
+# отключить искусственный дневной лимит API этого APK (10 вызовов/сутки, зашит в com.perm.kate.api)
+lim_old = ".field public static API_DAY_LIMIT:I = 0xa"
+lim_new = ".field public static API_DAY_LIMIT:I = 0x7fffffff"
+assert lim_old in s, "API_DAY_LIMIT не найден"
+s = s.replace(lim_old, lim_new, 1)
+
 for old, new in [
     ('const-string p2, "5.243"', 'const-string p2, "5.289"'),
     ('const-string p3, "5.243"', 'const-string p3, "5.289"'),
