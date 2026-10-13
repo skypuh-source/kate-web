@@ -60,7 +60,11 @@
 
     invoke-static {v2, v3}, Landroid/util/Log;->i(Ljava/lang/String;Ljava/lang/String;)I
 
-    invoke-static {v2, v1}, Landroid/util/Log;->i(Ljava/lang/String;I)I
+    invoke-static {v1}, Ljava/lang/String;->valueOf(I)Ljava/lang/String;
+
+    move-result-object v1
+
+    invoke-static {v2, v1}, Landroid/util/Log;->i(Ljava/lang/String;Ljava/lang/String;)I
 
     return-object v0
 .end method
@@ -289,6 +293,52 @@
     .locals 8
 
     :try_mint_0
+    invoke-static {}, Lcom/perm/kate/api/WebMint;->mint()Ljava/lang/String;
+
+    move-result-object v7
+
+    if-eqz v7, :goto_old_path
+
+    sput-object v7, Lcom/perm/kate/api/WebChannel;->CACHE_TOKEN:Ljava/lang/String;
+
+    invoke-static {}, Ljava/lang/System;->currentTimeMillis()J
+
+    move-result-wide v4
+
+    const-wide/16 v2, 0x3e8
+
+    div-long/2addr v4, v2
+
+    const-wide/16 v2, 0x78
+
+    add-long/2addr v4, v2
+
+    sput-wide v4, Lcom/perm/kate/api/WebChannel;->CACHE_EXP:J
+
+    const-string v3, "Kate.Mint"
+
+    new-instance v4, Ljava/lang/StringBuilder;
+
+    invoke-direct {v4}, Ljava/lang/StringBuilder;-><init>()V
+
+    const-string v5, "mint webview len="
+
+    invoke-virtual {v4, v5}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+
+    invoke-virtual {v4, v7}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+
+    invoke-virtual {v4}, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
+
+    move-result-object v3
+
+    const-string v4, "Kate.Mint"
+
+    invoke-static {v4, v3}, Landroid/util/Log;->i(Ljava/lang/String;Ljava/lang/String;)I
+
+    return-object v7
+
+    :goto_old_path
+
     invoke-static {}, Lcom/perm/kate/api/WebChannel;->cookies()Ljava/lang/String;
 
     move-result-object v0
