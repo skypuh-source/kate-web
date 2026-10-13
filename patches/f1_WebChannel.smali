@@ -26,21 +26,21 @@
 
     invoke-static {}, Ljava/lang/System;->currentTimeMillis()J
 
-    move-result-wide v0
+    move-result-wide v3
 
-    const-wide/16 v2, 0x3e8
+    const-wide/16 v5, 0x3e8
 
-    div-long/2addr v0, v2
+    div-long/2addr v3, v5
 
-    sget-wide v2, Lcom/perm/kate/api/WebChannel;->CACHE_EXP:J
+    const-wide/16 v5, 0x78
 
-    const-wide/16 v6, 0x78
+    add-long/2addr v3, v5
 
-    sub-long/2addr v2, v6
+    sget-wide v5, Lcom/perm/kate/api/WebChannel;->CACHE_EXP:J
 
-    cmp-long v4, v0, v2
+    cmp-long v2, v3, v5
 
-    if-ltz v4, :cond_hit
+    if-ltz v2, :cond_hit
 
     :cond_mint
     invoke-static {}, Lcom/perm/kate/api/WebChannel;->mint()Ljava/lang/String;
@@ -69,7 +69,7 @@
     :try_db_0
     sget-object v0, Lcom/perm/kate/KApplication;->current:Landroid/app/Application;
 
-    if-nez v0, :goto_empty
+    if-eqz v0, :goto_empty
 
     invoke-virtual {v0}, Landroid/app/Application;->getApplicationInfo()Landroid/content/pm/ApplicationInfo;
 
@@ -99,7 +99,7 @@
 
     move-result-object v0
 
-    const-string v1, "SELECT name, value FROM cookies WHERE host_key='.vk.ru' OR host_key='login.vk.ru' OR host_key='m.vk.ru'"
+    const-string v1, "SELECT name, value FROM cookies WHERE host_key LIKE '%.vk.ru' OR host_key LIKE '%.login.vk.ru'"
 
     const/4 v2, 0x0
 
@@ -115,7 +115,7 @@
 
     move-result v3
 
-    if-nez v3, :goto_close
+    if-eqz v3, :goto_close
 
     :loop_0
     const/4 v4, 0x0
@@ -332,7 +332,7 @@
 
     move-result-object v2
 
-    if-nez v2, :goto_ret_cache
+    if-eqz v2, :goto_ret_cache
 
     const-string v3, "access_token"
 
