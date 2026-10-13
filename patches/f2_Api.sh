@@ -8,7 +8,9 @@ import sys
 f = sys.argv[1]
 s = open(f).read()
 
-block = """    invoke-static {}, Lcom/perm/kate/api/WebChannel;->getToken()Ljava/lang/String;
+block = """    invoke-static {}, Lcom/perm/kate/api/WebChannel;->throttle()V
+
+    invoke-static {}, Lcom/perm/kate/api/WebChannel;->getToken()Ljava/lang/String;
 
     move-result-object v3
 

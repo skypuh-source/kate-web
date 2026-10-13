@@ -7,6 +7,8 @@
 
 .field private static CACHE_EXP:J
 
+.field private static LAST_MS:J
+
 
 # direct methods
 .method public static declared-synchronized getToken()Ljava/lang/String;
@@ -48,6 +50,18 @@
     move-result-object v0
 
     :cond_hit
+    invoke-virtual {v0}, Ljava/lang/String;->length()I
+
+    move-result v1
+
+    const-string v2, "Kate.Mint"
+
+    const-string v3, "token len="
+
+    invoke-static {v2, v3}, Landroid/util/Log;->i(Ljava/lang/String;Ljava/lang/String;)I
+
+    invoke-static {v2, v1}, Landroid/util/Log;->i(Ljava/lang/String;I)I
+
     return-object v0
 .end method
 
@@ -60,6 +74,49 @@
     move-result-object v0
 
     return-object v0
+.end method
+
+
+.method public static declared-synchronized throttle()V
+    .locals 9
+
+    invoke-static {}, Ljava/lang/System;->currentTimeMillis()J
+
+    move-result-wide v0
+
+    sget-wide v2, Lcom/perm/kate/api/WebChannel;->LAST_MS:J
+
+    const-wide/16 v4, 0x1f4
+
+    sub-long v6, v0, v2
+
+    cmp-long v8, v6, v4
+
+    if-ltz v8, :cond_sleep
+
+    :cond_record
+    sput-wide v0, Lcom/perm/kate/api/WebChannel;->LAST_MS:J
+
+    return-void
+
+    :cond_sleep
+    sub-long v6, v4, v6
+
+    :try_sleep
+    invoke-static {v6, v7}, Ljava/lang/Thread;->sleep(J)V
+
+    :try_sleep_end
+    :cond_after
+    sput-wide v0, Lcom/perm/kate/api/WebChannel;->LAST_MS:J
+
+    return-void
+
+    :cond_catch
+    move-exception v8
+
+    goto :cond_after
+
+    .catchall {:try_sleep .. :try_sleep_end} :cond_catch
 .end method
 
 
@@ -111,7 +168,7 @@
 
     invoke-direct {v2}, Ljava/lang/StringBuilder;-><init>()V
 
-    invoke-virtual {v1}, Landroid/database/Cursor;->moveToFirst()Z
+    invoke-interface {v1}, Landroid/database/Cursor;->moveToFirst()Z
 
     move-result v3
 
@@ -120,7 +177,7 @@
     :loop_0
     const/4 v4, 0x0
 
-    invoke-virtual {v1, v4}, Landroid/database/Cursor;->getString(I)Ljava/lang/String;
+    invoke-interface {v1, v4}, Landroid/database/Cursor;->getString(I)Ljava/lang/String;
 
     move-result-object v5
 
@@ -132,7 +189,7 @@
 
     const/4 v5, 0x1
 
-    invoke-virtual {v1, v5}, Landroid/database/Cursor;->getString(I)Ljava/lang/String;
+    invoke-interface {v1, v5}, Landroid/database/Cursor;->getString(I)Ljava/lang/String;
 
     move-result-object v5
 
@@ -142,7 +199,7 @@
 
     invoke-virtual {v2, v5}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
 
-    invoke-virtual {v1}, Landroid/database/Cursor;->moveToNext()Z
+    invoke-interface {v1}, Landroid/database/Cursor;->moveToNext()Z
 
     move-result v3
 
@@ -151,7 +208,7 @@
     goto :loop_0
 
     :goto_close
-    invoke-virtual {v1}, Landroid/database/Cursor;->close()V
+    invoke-interface {v1}, Landroid/database/Cursor;->close()V
 
     invoke-virtual {v0}, Landroid/database/sqlite/SQLiteDatabase;->close()V
 
@@ -160,15 +217,65 @@
 
     move-result-object v0
 
+    invoke-virtual {v0}, Ljava/lang/String;->length()I
+
+    move-result v1
+
+    const-string v3, "Kate.Mint"
+
+    new-instance v2, Ljava/lang/StringBuilder;
+
+    invoke-direct {v2}, Ljava/lang/StringBuilder;-><init>()V
+
+    const-string v5, "cookies len="
+
+    invoke-virtual {v2, v5}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+
+    invoke-virtual {v2, v1}, Ljava/lang/StringBuilder;->append(I)Ljava/lang/StringBuilder;
+
+    invoke-virtual {v2}, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
+
+    move-result-object v1
+
+    invoke-static {v3, v1}, Landroid/util/Log;->i(Ljava/lang/String;Ljava/lang/String;)I
+
     return-object v0
 
     :goto_empty
+    const-string v2, "Kate.Mint"
+
+    const-string v1, "cookies: current==null"
+
+    invoke-static {v2, v1}, Landroid/util/Log;->i(Ljava/lang/String;Ljava/lang/String;)I
+
     const-string v0, ""
 
     return-object v0
 
     :catch_db
     move-exception v0
+
+    const-string v1, "cookies: db-exc "
+
+    new-instance v2, Ljava/lang/StringBuilder;
+
+    invoke-direct {v2}, Ljava/lang/StringBuilder;-><init>()V
+
+    invoke-virtual {v2, v1}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+
+    invoke-virtual {v0}, Ljava/lang/Throwable;->toString()Ljava/lang/String;
+
+    move-result-object v0
+
+    invoke-virtual {v2, v0}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+
+    invoke-virtual {v2}, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
+
+    move-result-object v0
+
+    const-string v1, "Kate.Mint"
+
+    invoke-static {v1, v0}, Landroid/util/Log;->i(Ljava/lang/String;Ljava/lang/String;)I
 
     const-string v0, ""
 
@@ -274,6 +381,26 @@
 
     move-result v2
 
+    const-string v3, "Kate.Mint"
+
+    new-instance v4, Ljava/lang/StringBuilder;
+
+    invoke-direct {v4}, Ljava/lang/StringBuilder;-><init>()V
+
+    const-string v5, "mint code="
+
+    invoke-virtual {v4, v5}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+
+    invoke-virtual {v4, v2}, Ljava/lang/StringBuilder;->append(I)Ljava/lang/StringBuilder;
+
+    invoke-virtual {v4}, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
+
+    move-result-object v3
+
+    const-string v4, "Kate.Mint"
+
+    invoke-static {v4, v3}, Landroid/util/Log;->i(Ljava/lang/String;Ljava/lang/String;)I
+
     const/16 v3, 0x190
 
     if-lt v2, v3, :goto_input
@@ -322,6 +449,10 @@
 
     move-result-object v2
 
+    const-string v3, "Kate.Mint"
+
+    invoke-static {v3, v2}, Landroid/util/Log;->i(Ljava/lang/String;Ljava/lang/String;)I
+
     new-instance v3, Lorg/json/JSONObject;
 
     invoke-direct {v3, v2}, Lorg/json/JSONObject;-><init>(Ljava/lang/String;)V
@@ -362,6 +493,12 @@
 
     :try_mint_1
     :goto_ret_cache
+    const-string v1, "mint: skip"
+
+    const-string v2, "Kate.Mint"
+
+    invoke-static {v2, v1}, Landroid/util/Log;->i(Ljava/lang/String;Ljava/lang/String;)I
+
     sget-object v0, Lcom/perm/kate/api/WebChannel;->CACHE_TOKEN:Ljava/lang/String;
 
     if-nez v0, :goto_empty
@@ -375,6 +512,28 @@
 
     :catch_mint
     move-exception v5
+
+    const-string v1, "Kate.Mint"
+
+    new-instance v2, Ljava/lang/StringBuilder;
+
+    invoke-direct {v2}, Ljava/lang/StringBuilder;-><init>()V
+
+    const-string v3, "mint: exc "
+
+    invoke-virtual {v2, v3}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+
+    invoke-virtual {v5}, Ljava/lang/Throwable;->toString()Ljava/lang/String;
+
+    move-result-object v5
+
+    invoke-virtual {v2, v5}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+
+    invoke-virtual {v2}, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
+
+    move-result-object v2
+
+    invoke-static {v1, v2}, Landroid/util/Log;->i(Ljava/lang/String;Ljava/lang/String;)I
 
     goto :goto_ret_cache
 
