@@ -1,4 +1,5 @@
 decode/
 dist/_unsigned.apk
-.DS_Store
+dist/baseline-*/
+dist/baseline.log
 .DS_Store

@@ -1,5 +1,9 @@
 #!/bin/sh
-# патч f4: мета (targetSdk 29 для установки на Android 11+; debuggable для отладки/run-as)
+# патч f4: мета (targetSdk 36->29; debuggable для отладки/run-as).
+# При target>=30 установка падает: "Targeting R+ (version 30 and above) requires the
+# resources.arsc of installed APKs to be stored uncompressed and aligned on a 4-byte
+# boundary" — apktool кладёт resources.arsc сжатым. Поэтому target держим на 29.
+# Следствие: на Android 13 к медиа применяется легаси-модель (см. f11).
 K="$(dirname "$0")/../"
 cd "$K" || exit 1
 
