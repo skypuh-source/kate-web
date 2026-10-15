@@ -15,6 +15,9 @@
   3. `POST/GET https://web.api.vk.ru/method/<метод>?client_id=7879029` с `access_token` → `{"response":{...}}`.
 - Web_token переиспользуемый (~1ч, поле `expires`).
 - Для web-канала Клиентский id: **7879029** (сайтовый клиент), версия API **5.289**.
+- Набор методов web-канала ≠ старому API: нет `notifications.get` (`Unknown method passed`,
+  error 3), но есть `notifications.getRedesign` (+`getCategories`/`getUnreadCounters`/`getSettings`).
+  Такие расхождения закрываем тонкими конвертерами в родные модели (см. `patches/f14_*`).
 
 ## Рабочая структура (эта папка — ИСТОЧНИК ПРАВДЫ, НЕ /tmp)
 ```
