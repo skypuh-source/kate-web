@@ -3,3 +3,7 @@ dist/_unsigned.apk
 dist/baseline-*/
 dist/baseline.log
 .DS_Store
+
+# инструменты/данные, которые не коммитим
+tools/cloudflared
+wspush/captured/
