@@ -37,12 +37,6 @@ HISTORY.md       — журнал: сделано / потеряно / восс�
 - ничего важного НЕ хранится только в `/tmp`.
 `/tmp` использовать лишь для разовых операций, сразу перенося результат в `decode/`/`dist/`.
 
-## Зависимости окружения (восстановимо при переустановке)
-- `tools/apktool.jar` (2.12.1), JDK 17+ (`java/javac/keytool/jarsigner`),
-- `tools/adsdk/` — локальный резерв Android SDK (~480 МБ), в git **не хранится** и для сборки не требуется,
-- `adb` — PATH `/tmp/platform-tools` (скачан когда-то; можно переустановить платформенной тулзой),
-- устройство: Oppo Reno5 Lite (Android 13), `adb devices` — id `8L65GUJB85QO7D6S`.
-
 ## Как собрать с чистого листа (repro)
 1. `scripts/decode.sh` — apktool d orig → decode/
 2. `scripts/apply.sh` — применить все патчи из patches/ к decode/
