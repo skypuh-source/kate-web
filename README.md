@@ -40,6 +40,7 @@ HISTORY.md       — журнал: сделано / потеряно / восс�
 
 ## Зависимости окружения (восстановимо при переустановке)
 - `tools/apktool.jar` (2.12.1), JDK 17+ (`java/javac/keytool/jarsigner`),
+- `tools/adsdk/` — локальный резерв Android SDK (~480 МБ), в git **не хранится** и для сборки не требуется,
 - `adb` — PATH `/tmp/platform-tools` (скачан когда-то; можно переустановить платформенной тулзой),
 - устройство: Oppo Reno5 Lite (Android 13), `adb devices` — id `8L65GUJB85QO7D6S`.
 

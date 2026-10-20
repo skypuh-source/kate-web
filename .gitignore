@@ -6,4 +6,5 @@ dist/baseline.log
 
 # инструменты/данные, которые не коммитим
 tools/cloudflared
+tools/adsdk/
 wspush/captured/
