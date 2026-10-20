@@ -1,0 +1,96 @@
+name: release
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      version_name:
+        description: 'versionName, например 133.12 (пусто — 133.MMDD)'
+        required: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Build APK
+        env:
+          INPUT_VN: ${{ inputs.version_name }}
+        run: |
+          set -euo pipefail
+          if [ "${GITHUB_REF_TYPE}" = "tag" ]; then
+            VN="${GITHUB_REF_NAME#v}"
+          elif [ -n "${INPUT_VN}" ]; then
+            VN="${INPUT_VN}"
+          else
+            VN="133.$(date +%m%d)"
+          fi
+          VC=$((627 + GITHUB_RUN_NUMBER))
+          export VN VC
+          echo "VN=$VN" >> "$GITHUB_ENV"
+          echo "VC=$VC" >> "$GITHUB_ENV"
+          echo "release: versionName=$VN versionCode=$VC"
+
+          sh scripts/decode.sh
+          sh scripts/apply.sh
+          sed -i "s/versionCode: .*/versionCode: ${VC}/" decode/apktool.yml
+          sed -i "s/versionName: .*/versionName: ${VN}/" decode/apktool.yml
+          grep -n "versionCode\|versionName" decode/apktool.yml
+
+          sh scripts/build.sh
+          OUT="dist/kate_web-$(date +%Y-%m-%d).apk"
+          test -f "$OUT"
+          cp "$OUT" Kate.apk
+
+          python3 - <<'PY'
+          import json, os
+          vn = os.environ["VN"]
+          vc = int(os.environ["VC"])
+          data = {
+              "code": vc,
+              "name": vn,
+              "message": f"Обновление kate-web {vn}",
+              "market": "https://github.com/skypuh-source/kate-web/releases/latest",
+          }
+          with open("version.json", "w", encoding="utf-8") as f:
+              json.dump(data, f, ensure_ascii=False)
+          PY
+          cat version.json
+
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          if [ "${GITHUB_REF_TYPE}" = "tag" ]; then
+            TAG="${GITHUB_REF_NAME}"
+            if gh release view "$TAG" >/dev/null 2>&1; then
+              gh release upload "$TAG" Kate.apk version.json --clobber
+              gh release edit "$TAG" --title "$VN" --notes "kate-web $VN (versionCode $VC)"
+            else
+              gh release create "$TAG" Kate.apk version.json \
+                --title "$VN" --notes "kate-web $VN (versionCode $VC)"
+            fi
+          else
+            TAG="v${VN}"
+            if gh release view "$TAG" >/dev/null 2>&1; then
+              gh release upload "$TAG" Kate.apk version.json --clobber
+            else
+              gh release create "$TAG" Kate.apk version.json \
+                --target "$GITHUB_SHA" --title "$VN" --notes "kate-web $VN (versionCode $VC)"
+            fi
+          fi

@@ -8,6 +8,10 @@ java -jar tools/apktool_2.12.1.jar b decode -o dist/_unsigned.apk || exit 1
 jarsigner -keystore keys/debug.keystore -storepass android \
   -signedjar "$OUT" dist/_unsigned.apk androiddebugkey || exit 1
 jarsigner -verify "$OUT" || exit 1
-MD5=$(md5 -q "$OUT")
+if command -v md5 >/dev/null 2>&1; then
+  MD5=$(md5 -q "$OUT")
+else
+  MD5=$(md5sum "$OUT" | awk '{print $1}')
+fi
 echo "$TS $OUT $MD5" >> HISTORY.md
 echo "OK: $OUT (md5 $MD5)"
