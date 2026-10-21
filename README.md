@@ -1,3 +1,7 @@
+<div align="center">
+  <img src="assets/mascot/fox.gif" alt="Маскот kate-web — лисёнок, который следит за курсором" width="180">
+</div>
+
 # kate-web
 
 [![privacy](https://github.com/skypuh-source/kate-web/actions/workflows/privacy.yml/badge.svg)](https://github.com/skypuh-source/kate-web/actions/workflows/privacy.yml)
@@ -145,6 +149,12 @@ GitHub Actions собирает APK, выставляет `versionName` из т�
 После изменения патчей нужно прогнать полный цикл `decode → apply → build` и проверить,
 что APK собирается и подписывается. Новые патчи добавляйте с префиксом `f` и следующим
 свободным номером.
+
+## Благодарности
+
+Маскот fox взят из проекта [page-mascot](https://github.com/nilbuild/page-mascot)
+(MIT, © 2026 Kamran Ahmed). Текст лицензии — в
+[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
 ## Дисклеймер
 
