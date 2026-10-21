@@ -13,5 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Check repository scope
+        run: sh scripts/check_scope.sh
       - name: Check personal data
         run: sh scripts/check_privacy.sh

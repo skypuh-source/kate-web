@@ -75,12 +75,34 @@ LongPoll запускается через `messages.getLongPollServer` и оп�
 | `scripts/decode.sh` | декомпиляция оригинала в `decode/` |
 | `scripts/apply.sh` | применение всех `patches/f*` |
 | `scripts/build.sh` | сборка, подпись и проверка APK |
+| `scripts/check_scope.sh` | проверка состава репозитория |
+| `scripts/check_privacy.sh` | проверка на личные данные |
 | `tools/apktool_2.12.1.jar` | apktool |
 | `keys/debug.keystore` | ключ подписи; не пересоздавать |
 | `.github/workflows/` | release и privacy CI |
+| `assets/mascot/` | ассеты README |
 | `README.md` | описание и инструкции |
+| `THIRD_PARTY_NOTICES.md` | лицензии сторонних компонентов |
 
 `decode/`, `dist/`, `Kate.apk` и `version.json` создаются локально и не коммитятся.
+
+## Правила репозитория
+
+В GitHub попадает только то, что непосредственно нужно для сборки, релиза, защиты
+репозитория или README. Всё остальное остаётся локально.
+
+Разрешены:
+
+- `orig/`, `patches/`, `tools/`, `keys/` — входные данные и инструменты сборки;
+- `scripts/decode.sh`, `apply.sh`, `build.sh` — сборка;
+- `scripts/check_privacy.sh`, `check_scope.sh` и два workflow — защита и релиз;
+- `README.md`, `THIRD_PARTY_NOTICES.md` и `assets/mascot/` — описание и его ассеты.
+
+Не коммитятся: планы, журналы, аудиты, исследования, эксперименты, отдельные
+подпроекты, APK и другие артефакты сборки, логи, временные файлы и скриншоты вне README.
+
+Проверка выполняется в CI через `scripts/check_scope.sh`. Новый путь вне allowlist
+блокируется; если файл действительно нужен проекту, его добавляют в allowlist осознанно.
 
 ## Сборка
 

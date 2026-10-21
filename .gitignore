@@ -3,3 +3,4 @@ dist/
 Kate.apk
 version.json
 .DS_Store
+*.log
