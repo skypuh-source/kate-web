@@ -1,10 +1,5 @@
 decode/
-dist/_unsigned.apk
-dist/baseline-*/
-dist/baseline.log
+dist/
+Kate.apk
+version.json
 .DS_Store
-
-# инструменты/данные, которые не коммитим
-tools/cloudflared
-tools/adsdk/
-wspush/captured/
