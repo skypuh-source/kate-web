@@ -11,7 +11,17 @@ user1='igormur'
 user2='dasov'
 uid1='165654'
 uid2='293'
-patterns="${name1}${name2}|${name3}${name4}|[Ii]${user1}${user2}|[Mm]ur${user2}|${uid1}${uid2}|/Users/[A-Za-z0-9._-]+"
+mail1='skypuh@gmail'
+mail2='.com'
+local1='dev'
+local2='@local'
+patterns="${name1}${name2}|${name3}${name4}|[Ii]${user1}${user2}|[Mm]ur${user2}|${uid1}${uid2}|${mail1}${mail2}|${local1}${local2}|/Users/[A-Za-z0-9._-]+"
+
+identity="${PRIVACY_IDENTITY:-$(git log -1 --format='%an <%ae> %cn <%ce>' 2>/dev/null || true)}"
+if [ -n "$identity" ] && printf '%s' "$identity" | grep -Eq "$patterns"; then
+  printf '%s\n' 'Privacy check failed: personal data in commit identity.' >&2
+  exit 1
+fi
 
 hits=$(git grep -l -a -E "$patterns" -- . \
   ':(exclude)scripts/check_privacy.sh' \
