@@ -2,17 +2,16 @@
 # патч f44 (2026-10-20): управление уведомлением службы-якоря (KeepAliveService).
 #
 # В настройках уведомлений:
-#   1) переключатель «Скрыть службу-якорь» — служба продолжает работать foreground,
-#      но уведомление уходит в отдельный канал "kate_keepalive_hidden" (без значка
-#      в строке состояния, в бесшумных);
-#   2) пункт «Настройки канала службы-якоря» открывает системный экран канала.
-#      Если выключить там «Разрешить уведомления», Android вообще не показывает
-#      уведомление, а foreground-служба продолжает жить (проверено на Android 13).
+#   переключатель «Скрыть службу-якорь» — служба продолжает работать foreground,
+#   но уведомление уходит в отдельный канал "kate_keepalive_hidden" (без значка
+#   в строке состояния, в бесшумных).
 #
-# Android принудительно поднимает важность FGS-канала до LOW, поэтому одного
-# IMPORTANCE_NONE недостаточно для полного скрытия из шторки — нужен именно
-# пользовательский запрет канала. Без foreground-уведомления система убивает
-# процесс и уведомления о сообщениях перестают приходить (см. f41).
+# Важно: нельзя отключать уведомления канала службы-якоря в системных настройках.
+# На части прошивок после этого foreground-служба останавливается, и сообщения
+# перестают приходить. Поэтому ссылка на настройки канала из приложения убрана.
+# Видимый канал имеет отдельный ID: если старый канал "kate_keepalive" был
+# отключён пользователем, после выключения скрытия служба всё равно покажет
+# уведомление в новом канале.
 K="$(dirname "$0")/../"
 cd "$K" || exit 1
 
@@ -31,22 +30,12 @@ for p in ("decode/res/xml/preferences.xml", "decode/res/xml-v22/preferences.xml"
         continue
     anchor = '        <CheckBoxPreference android:title="@string/running_title" android:key="running_notification" android:summary="@string/running_summary" android:defaultValue="false" />\n'
     assert s.count(anchor) == 1, "f44: якорь running_notification не найден/не уникален в %s" % p
-    single_line = ' android:singleLineTitle="false"' if "-v22/" in p else ''
     item = (
         '        <CheckBoxPreference android:title="Скрыть службу-якорь" '
         'android:key="key_hide_keepalive" '
-        'android:summary="Служба продолжит работать; уведомление будет без значка. '
-        'Убрать из шторки — в настройках канала." '
+        'android:summary="Служба продолжит работать; уведомление станет тихим и без значка. '
+        'Не отключайте уведомления канала в системе — служба может остановиться." '
         'android:defaultValue="false" />\n'
-        '        <PreferenceScreen android:title="Настройки канала службы-якоря" '
-        'android:key="key_hide_keepalive_channel" '
-        'android:summary="Отключите «Разрешить уведомления», чтобы скрыть уведомление из шторки" '
-        'android:dependency="key_hide_keepalive"' + single_line + '>\n'
-        '            <intent android:action="android.settings.CHANNEL_NOTIFICATION_SETTINGS">\n'
-        '                <extra android:name="android.provider.extra.APP_PACKAGE" android:value="com.perm.kate" />\n'
-        '                <extra android:name="android.provider.extra.CHANNEL_ID" android:value="kate_keepalive_hidden" />\n'
-        '            </intent>\n'
-        '        </PreferenceScreen>\n'
     )
     s = s.replace(anchor, anchor + item, 1)
     open(p, "w", encoding="utf-8").write(s)
@@ -81,7 +70,7 @@ if "key_hide_keepalive" not in s:
 
     check-cast v0, Landroid/app/NotificationManager;
 
-    const-string v10, "kate_keepalive"
+    const-string v10, "kate_keepalive_visible"
 
     sget v1, Landroid/os/Build$VERSION;->SDK_INT:I
 
@@ -166,22 +155,23 @@ if "key_hide_keepalive" not in s:
 
     move-result-object v1
 
-    if-nez v9, :cond_notif_built
+    if-eqz v9, :cond_priority_hidden
 
+    const/4 v2, -0x1
+
+    goto :cond_priority_apply
+
+    :cond_priority_hidden
     const/4 v2, -0x2
 
+    :cond_priority_apply
     invoke-virtual {v1, v2}, Landroid/app/Notification$Builder;->setPriority(I)Landroid/app/Notification$Builder;
 
     move-result-object v1
 
-    :cond_notif_built
     invoke-virtual {v1}, Landroid/app/Notification$Builder;->build()Landroid/app/Notification;
 
     move-result-object v1
-
-    const/4 v2, 0x1
-
-    invoke-virtual {p0, v2}, Landroid/app/Service;->stopForeground(Z)V
 
     const/16 v2, 0x1234
 
