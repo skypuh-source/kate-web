@@ -133,7 +133,7 @@ git push origin v133.xx
 ```
 
 GitHub Actions собирает APK, выставляет `versionName` из тега и `versionCode` по формуле
-`1000 + номер запуска`, после чего публикует в Release файлы `Kate.apk` и `version.json`.
+`2000 + номер запуска`, после чего публикует в Release файлы `Kate.apk` и `version.json`.
 
 Штатный `UpdateChecker` приложения читает `version.json` из последнего релиза и
 предлагает установить новую версию. Первый переход на сборку с GitHub-обновлениями

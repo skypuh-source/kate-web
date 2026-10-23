@@ -39,8 +39,8 @@ jobs:
           else
             VN="133.$(date +%m%d)"
           fi
-          # база 1000: локальные тестовые сборки (631–641) не должны быть выше релиза
-          VC=$((1000 + GITHUB_RUN_NUMBER))
+          # база 2000: должна перекрывать локальные тестовые сборки (versionCode 2000)
+          VC=$((2000 + GITHUB_RUN_NUMBER))
           export VN VC
           echo "VN=$VN" >> "$GITHUB_ENV"
           echo "VC=$VC" >> "$GITHUB_ENV"
