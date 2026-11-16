@@ -3,7 +3,7 @@ set -eu
 
 cd "$(git rev-parse --show-toplevel)"
 
-allowed='^(\.gitignore|README\.md|THIRD_PARTY_NOTICES\.md|assets/mascot/[^/]+|\.github/workflows/(privacy|release)\.yml|keys/debug\.keystore|orig/Kate_133_11\.apk|patches/f.+|scripts/(apply|build|check_privacy|check_scope|decode)\.sh|tools/apktool_2\.12\.1\.jar)$'
+allowed='^(\.gitignore|README\.md|THIRD_PARTY_NOTICES\.md|assets/mascot/[^/]+|\.github/workflows/(privacy|release)\.yml|keys/debug\.keystore|orig/Kate_133_11\.apk|patches/(f|h).+|scripts/(apply|build|check_privacy|check_scope|decode)\.sh|tools/apktool_2\.12\.1\.jar)$'
 
 bad=$(git ls-files | grep -Ev "$allowed" || true)
 

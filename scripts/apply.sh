@@ -22,4 +22,9 @@ for p in patches/f*; do
       sh "$p" ;;
   esac
 done
+# Постоянные исправления этапа H (авторизация).
+for h in patches/h7_*.sh patches/h8_*.sh patches/h9_*.sh patches/h10_*.sh; do
+  [ -f "$h" ] || continue
+  sh "$h"
+done
 echo "патчи применены"
