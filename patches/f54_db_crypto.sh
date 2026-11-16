@@ -24,7 +24,8 @@
 #
 # Настройка: «Профиль» → «Шифрование базы». На API < 23 пункт скрыт, шифрование
 # выключено (Keystore нет). Миграция — фоном, одной транзакцией, затем
-# PRAGMA secure_delete=ON и VACUUM. Ошибка расшифровки → плейсхолдер, без краша.
+# PRAGMA secure_delete=ON, VACUUM и wal_checkpoint(TRUNCATE), чтобы в WAL не
+# оставался старый открытый текст. Ошибка расшифровки → плейсхолдер, без краша.
 #
 # Откат: удалить патч из patches/, пересобрать decode/ и APK; перед этим в
 # приложении снять галочку «Шифровать текст сообщений» и дождаться расшифровки.
@@ -901,6 +902,32 @@ CRYPTO = '''.class public final Lcom/perm/kate/db/DbCrypto;
     invoke-static {v3, v4, v2}, Landroid/util/Log;->e(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)I
 
     :vac_done
+    :try_start_wal
+    const-string v2, "PRAGMA wal_checkpoint(TRUNCATE)"
+
+    const/4 v3, 0x0
+
+    invoke-virtual {v0, v2, v3}, Landroid/database/sqlite/SQLiteDatabase;->rawQuery(Ljava/lang/String;[Ljava/lang/String;)Landroid/database/Cursor;
+
+    move-result-object v2
+
+    invoke-interface {v2}, Landroid/database/Cursor;->moveToFirst()Z
+
+    invoke-interface {v2}, Landroid/database/Cursor;->close()V
+    :try_end_wal
+    .catch Ljava/lang/Throwable; {:try_start_wal .. :try_end_wal} :wal_err
+
+    return-void
+
+    :wal_err
+    move-exception v2
+
+    const-string v3, "Kate.DbCrypto"
+
+    const-string v4, "wal checkpoint failed"
+
+    invoke-static {v3, v4, v2}, Landroid/util/Log;->e(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)I
+
     return-void
 
     :mig_err
